@@ -23,11 +23,5 @@
   "background": {
     "service_worker": "background.js",
     "type": "module"
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://*.linkedin.com/*"],
-      "js": ["contentScript.js"]
-    }
-  ]
+  }
 }

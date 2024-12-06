@@ -1,11 +1,9 @@
 /*global chrome*/
 
-console.log("Background script loaded");
 const linkedinListViewUrl = "https://www.linkedin.com/jobs/collections";
 const linkedinDetailViewUrl = "https://www.linkedin.com/jobs/view";
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log("Tab updated", tab.url);
   if (changeInfo.status === "complete" && tab.active) {
     if (
       tab.url?.startsWith(linkedinListViewUrl) ||
@@ -16,10 +14,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           target: { tabId },
           func: grabJobDescription,
           args: [getJobDescriptionClassName(tab.url)],
-          // files: ["contentScript.js"],
         })
         .then((results) => {
-          console.log(results);
           chrome.storage.local.set({ jobDescription: results[0].result });
         });
     }
@@ -102,6 +98,5 @@ function grabJobDescription(className) {
     .replace(/<!--+>+/g, "") // Remove HTML comments
     .trim();
 
-  console.log("Scraped job details:", cleanedJobDetails);
   return cleanedJobDetails || "";
 }

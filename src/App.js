@@ -31,7 +31,11 @@ function App() {
   return (
     <>
       {page === ROUTES.GENERATOR && (
-        <Generator onSettingsClick={() => setPage(ROUTES.PROFILE)} />
+        <Generator
+          onSettingsClick={() => setPage(ROUTES.PROFILE)}
+          resume={resumeText}
+          openAiKey={openAiKey}
+        />
       )}
       {page === ROUTES.PROFILE && (
         <Profile

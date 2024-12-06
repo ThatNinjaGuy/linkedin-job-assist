@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { getFromStorage } from "../utils/localStorage";
+import { postChatGptMessage } from "../utils/chatGPTUtil";
 
-function Generator({ onSettingsClick }) {
+function Generator({ onSettingsClick, resume, openAiKey }) {
   const [jobDescription, setJobDescription] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchedJobDescription = async () => {
@@ -12,12 +15,34 @@ function Generator({ onSettingsClick }) {
     fetchedJobDescription();
   }, []);
 
+  const generateCoverLetter = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const message = `Generate a cover letter based on the following resume and job description. Ensure you are relevant. Avoid leaving placeholders to be replaced later. Act with the information you have.\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jobDescription}`;
+      const chatGPTResponse = await postChatGptMessage(message, openAiKey);
+      setCoverLetter(chatGPTResponse);
+    } catch (error) {
+      console.error("Failed to generate cover letter:", error);
+      setCoverLetter("Failed to generate cover letter. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-[600px] w-[600px]">
       {/* Header */}
       <header className="bg-blue-600 text-white px-6 py-3 flex items-center justify-between shrink-0">
-        <button className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition-colors text-sm">
-          Generate
+        <button
+          onClick={generateCoverLetter}
+          className={`bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition-colors text-sm ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Generating..." : "Generate"}
         </button>
 
         <h1 className="text-xl font-semibold">
@@ -58,7 +83,7 @@ function Generator({ onSettingsClick }) {
             className="w-full h-full resize-none focus:outline-none"
             placeholder="Your generated cover letter will appear here..."
             readOnly
-            value={jobDescription}
+            value={coverLetter}
           />
         </div>
       </main>
