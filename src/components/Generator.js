@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getFromStorage } from "../utils/localStorage";
 
 function Generator({ onSettingsClick }) {
+  const [jobDescription, setJobDescription] = useState("");
+
+  useEffect(() => {
+    const fetchedJobDescription = async () => {
+      const fetchedJob = await getFromStorage("jobDescription");
+      setJobDescription(fetchedJob);
+    };
+    fetchedJobDescription();
+  }, []);
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[600px] w-[600px]">
       {/* Header */}
-      <header className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
-        <button className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition-colors">
+      <header className="bg-blue-600 text-white px-6 py-3 flex items-center justify-between shrink-0">
+        <button className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition-colors text-sm">
           Generate
         </button>
 
-        <h1 className="text-2xl font-semibold">
+        <h1 className="text-xl font-semibold">
           LinkedIn Cover Letter Generator
         </h1>
 
@@ -19,7 +30,7 @@ function Generator({ onSettingsClick }) {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
+            className="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -41,12 +52,13 @@ function Generator({ onSettingsClick }) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-50">
+      <main className="flex-1 p-4 bg-gray-50 overflow-auto">
         <div className="h-full w-full border-2 border-blue-200 rounded-lg p-4 bg-white">
           <textarea
             className="w-full h-full resize-none focus:outline-none"
             placeholder="Your generated cover letter will appear here..."
             readOnly
+            value={jobDescription}
           />
         </div>
       </main>
