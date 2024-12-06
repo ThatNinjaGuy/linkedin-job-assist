@@ -1,6 +1,41 @@
-import React from "react";
+import React, { useRef } from "react";
+import { saveToStorage, STORAGE_KEYS } from "../utils/localStorage";
 
-function Profile({ onBackClick }) {
+function Profile({
+  onBackClick,
+  resumeText,
+  openAiKey,
+  setOpenAiKey,
+  setResumeText,
+}) {
+  const formRef = useRef(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(formRef.current);
+
+    const newApiKey = formData.get("apiKey");
+    const newResumeText = formData.get("resume");
+
+    try {
+      // Save to state
+      setOpenAiKey(newApiKey);
+      setResumeText(newResumeText);
+
+      // Save to Chrome storage
+      await Promise.all([
+        saveToStorage(STORAGE_KEYS.OPENAI_KEY, newApiKey),
+        saveToStorage(STORAGE_KEYS.RESUME_TEXT, newResumeText),
+      ]);
+
+      // Navigate back on successful save
+      //   onBackClick();
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+      // Here you might want to show an error message to the user
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
@@ -32,7 +67,11 @@ function Profile({ onBackClick }) {
 
       {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-50">
-        <div className="max-w-3xl mx-auto space-y-6">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="max-w-3xl mx-auto space-y-6"
+        >
           {/* API Key Section */}
           <div className="bg-white p-6 rounded-lg shadow-sm border border-blue-200">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -47,7 +86,9 @@ function Profile({ onBackClick }) {
               </label>
               <input
                 id="apiKey"
+                name="apiKey"
                 type="password"
+                defaultValue={openAiKey}
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 placeholder="sk-..."
               />
@@ -71,7 +112,9 @@ function Profile({ onBackClick }) {
               </label>
               <textarea
                 id="resume"
+                name="resume"
                 rows={12}
+                defaultValue={resumeText}
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 placeholder="Paste your resume content here..."
               />
@@ -83,11 +126,14 @@ function Profile({ onBackClick }) {
 
           {/* Save Button */}
           <div className="flex justify-center">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
               Save Profile
             </button>
           </div>
-        </div>
+        </form>
       </main>
     </div>
   );
