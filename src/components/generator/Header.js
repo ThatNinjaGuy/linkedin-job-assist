@@ -3,9 +3,7 @@ import React from "react";
 function Header({ onSettingsClick }) {
   return (
     <header className="bg-blue-600 text-white px-6 py-3 flex items-center justify-between shrink-0">
-      <h1 className="text-xl font-semibold mx-auto">
-        LinkedIn Cover Letter Generator
-      </h1>
+      <h1 className="text-xl font-semibold mx-auto">LinkedIn Job Assist</h1>
 
       <button
         onClick={onSettingsClick}

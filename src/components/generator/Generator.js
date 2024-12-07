@@ -13,15 +13,18 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
   const [companyName, setCompanyName] = useState("");
   const [roleName, setRoleName] = useState("");
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const [jobId, setJobId] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       const fetchedJob = await getFromStorage("jobDescription");
       const fetchedCompanyName = await getFromStorage("companyName");
       const fetchedRoleName = await getFromStorage("roleName");
+      const fetchedJobId = await getFromStorage("jobId");
       setJobDescription(fetchedJob);
       setCompanyName(fetchedCompanyName);
       setRoleName(fetchedRoleName);
+      setJobId(fetchedJobId);
     };
     fetchData();
   }, []);
@@ -62,6 +65,7 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
       />
       <Header onSettingsClick={onSettingsClick} />
       <MainContent
+        jobId={jobId}
         companyName={companyName}
         roleName={roleName}
         generateCoverLetter={generateCoverLetter}

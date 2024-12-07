@@ -12,12 +12,12 @@ function Footer({ coverLetter, copyToClipboard }) {
         />
         <button
           onClick={copyToClipboard}
-          className="absolute top-2 right-2 bg-green-500 hover:bg-green-600 text-white p-2 transition-transform transform hover:scale-110 rounded-full"
+          className="absolute top-2 right-2 bg-blue-400 hover:bg-blue-500 text-white p-2 transition-transform transform hover:scale-110 rounded-full"
           title="Copy to clipboard"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -26,7 +26,7 @@ function Footer({ coverLetter, copyToClipboard }) {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M8 16h8M8 12h8m-8-4h8m-8 8v4a2 2 0 002 2h8a2 2 0 002-2v-4m-2 0H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v4"
+              d="M8 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H8zM8 2h8m-4 0v4"
             />
           </svg>
         </button>
