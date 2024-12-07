@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Generator from "./components/Generator";
+import Generator from "./components/generator/Generator";
 import Profile from "./components/Profile";
 import { ROUTES } from "./utils/routes";
 import { getFromStorage, STORAGE_KEYS } from "./utils/localStorage";

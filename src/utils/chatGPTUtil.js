@@ -5,7 +5,7 @@ const CHATGPT_API_URL = "https://api.openai.com/v1/chat/completions";
 const CHATGPT_MODEL = "gpt-3.5-turbo";
 
 // Flag to control whether to use ChatGPT API or return dummy data
-const useChatGPT = true; // Set to true to make actual API calls
+const useChatGPT = false; // Set to true to make actual API calls
 
 export const postChatGptMessage = async (message, openAiKey) => {
   if (!useChatGPT) {

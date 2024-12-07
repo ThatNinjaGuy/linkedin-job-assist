@@ -9,6 +9,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       tab.url?.startsWith(linkedinListViewUrl) ||
       tab.url?.startsWith(linkedinDetailViewUrl)
     ) {
+      const jobId = extractJobIdFromUrl(tab.url);
+
       chrome.scripting
         .executeScript({
           target: { tabId },
@@ -121,10 +123,12 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         })
         .then((results) => {
           console.log("Results from grabJobDescription:", results);
+          console.log("Job ID:", jobId);
           chrome.storage.local.set({
             jobDescription: results[0].result.description,
             companyName: results[0].result.companyName,
             roleName: results[0].result.roleName,
+            jobId: jobId,
           });
         })
         .catch((error) => {
@@ -149,4 +153,9 @@ function getJobDescriptionClassNames(url) {
       roleNameClass: "job-details-jobs-unified-top-card__job-title", // Replace with actual class
     };
   }
+}
+
+function extractJobIdFromUrl(url) {
+  const urlParams = new URLSearchParams(new URL(url).search);
+  return urlParams.get("currentJobId") || "";
 }
