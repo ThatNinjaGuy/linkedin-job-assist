@@ -6,11 +6,17 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
   const [jobDescription, setJobDescription] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
   const [loading, setLoading] = useState(false);
+  const [companyName, setCompanyName] = useState("");
+  const [roleName, setRoleName] = useState("");
 
   useEffect(() => {
     const fetchedJobDescription = async () => {
       const fetchedJob = await getFromStorage("jobDescription");
+      const fetchedCompanyName = await getFromStorage("companyName");
+      const fetchedRoleName = await getFromStorage("roleName");
       setJobDescription(fetchedJob);
+      setCompanyName(fetchedCompanyName);
+      setRoleName(fetchedRoleName);
     };
     fetchedJobDescription();
   }, []);
@@ -79,6 +85,10 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
       {/* Main Content */}
       <main className="flex-1 p-4 bg-gray-50 overflow-auto">
         <div className="h-full w-full border-2 border-blue-200 rounded-lg p-4 bg-white">
+          <div className="mb-4">
+            <h2 className="text-lg font-bold">Company: {companyName}</h2>
+            <h3 className="text-md font-semibold">Role: {roleName}</h3>
+          </div>
           <textarea
             className="w-full h-full resize-none focus:outline-none"
             placeholder="Your generated cover letter will appear here..."
