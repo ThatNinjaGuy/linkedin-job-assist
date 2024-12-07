@@ -8,9 +8,10 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
   const [loading, setLoading] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [roleName, setRoleName] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
 
   useEffect(() => {
-    const fetchedJobDescription = async () => {
+    const fetchData = async () => {
       const fetchedJob = await getFromStorage("jobDescription");
       const fetchedCompanyName = await getFromStorage("companyName");
       const fetchedRoleName = await getFromStorage("roleName");
@@ -18,7 +19,7 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
       setCompanyName(fetchedCompanyName);
       setRoleName(fetchedRoleName);
     };
-    fetchedJobDescription();
+    fetchData();
   }, []);
 
   const generateCoverLetter = async () => {
@@ -26,7 +27,7 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
     setLoading(true);
 
     try {
-      const message = `Generate a cover letter based on the following resume and job description. Ensure you are relevant. Avoid leaving placeholders to be replaced later. Act with the information you have.\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jobDescription}`;
+      const message = `Generate a cover letter based on the following resume and job description. Show interest by relating the requirements to skills from resume. Do not provide placeholders for anything. User generic terms or ignore referring to it, if an information is unknown.\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jobDescription}`;
       const chatGPTResponse = await postChatGptMessage(message, openAiKey);
       setCoverLetter(chatGPTResponse);
     } catch (error) {
@@ -37,21 +38,30 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
     }
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(coverLetter).then(
+      () => {
+        setNotificationVisible(true);
+        setTimeout(() => setNotificationVisible(false), 2000);
+      },
+      (err) => {
+        console.error("Failed to copy text: ", err);
+      }
+    );
+  };
+
   return (
     <div className="flex flex-col h-[600px] w-[600px]">
+      {/* Notification */}
+      {notificationVisible && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-md shadow-md z-50">
+          Cover letter copied to clipboard!
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-blue-600 text-white px-6 py-3 flex items-center justify-between shrink-0">
-        <button
-          onClick={generateCoverLetter}
-          className={`bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition-colors text-sm ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading}
-        >
-          {loading ? "Generating..." : "Generate"}
-        </button>
-
-        <h1 className="text-xl font-semibold">
+        <h1 className="text-xl font-semibold mx-auto">
           LinkedIn Cover Letter Generator
         </h1>
 
@@ -83,20 +93,66 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 bg-gray-50 overflow-auto">
-        <div className="h-full w-full border-2 border-blue-200 rounded-lg p-4 bg-white">
+      <main className="flex-none p-4 bg-gray-50">
+        <div className="border-2 border-blue-200 rounded-lg p-4 bg-white">
           <div className="mb-4">
             <h2 className="text-lg font-bold">Company: {companyName}</h2>
             <h3 className="text-md font-semibold">Role: {roleName}</h3>
           </div>
+          <div className="flex flex-wrap gap-2 justify-between">
+            <button
+              onClick={generateCoverLetter}
+              className={`bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%] ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Generating..." : "Generate Cover Letter"}
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%]">
+              Button 2
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%]">
+              Button 3
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%]">
+              Button 4
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="flex-1 p-4 bg-gray-50 relative">
+        <div className="relative h-full">
           <textarea
-            className="w-full h-full resize-none focus:outline-none"
+            className="w-full h-full resize-none focus:outline-none border-2 border-blue-200 rounded-lg p-2"
             placeholder="Your generated cover letter will appear here..."
             readOnly
             value={coverLetter}
           />
+          <button
+            onClick={copyToClipboard}
+            className="absolute top-2 right-2 bg-green-500 hover:bg-green-600 text-white p-2 transition-transform transform hover:scale-110 rounded-full"
+            title="Copy to clipboard"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 16h8M8 12h8m-8-4h8m-8 8v4a2 2 0 002 2h8a2 2 0 002-2v-4m-2 0H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v4"
+              />
+            </svg>
+          </button>
         </div>
-      </main>
+      </footer>
     </div>
   );
 }

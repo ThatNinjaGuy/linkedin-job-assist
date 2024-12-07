@@ -16,6 +16,9 @@ This application is designed to help users generate personalized cover letters f
   - Simple navigation between the Profile and Generator pages.
   - Responsive design with a focus on usability.
 
+- **Development Mode**:
+  - Control API usage with a flag to prevent unnecessary calls during development.
+
 ## Components
 
 - **App**: The main component that manages the navigation between the Profile and Generator pages.
@@ -32,6 +35,15 @@ This application is designed to help users generate personalized cover letters f
 2. **Generate Cover Letter**:
    - Navigate to the Generator page.
    - Click the "Generate" button to create a cover letter based on your resume and a job description.
+
+## Development Mode
+
+To prevent unnecessary API calls during development, a flag (`useChatGPT`) is available in `src/utils/chatGPTUtil.js`. Set this flag to `false` to use dummy data instead of making actual API calls. This helps in reducing costs and allows for testing without incurring charges.
+
+```javascript
+// src/utils/chatGPTUtil.js
+const useChatGPT = false; // Set to true to make actual API calls
+```
 
 ## Installation
 
