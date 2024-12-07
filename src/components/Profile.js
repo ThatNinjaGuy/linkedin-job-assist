@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { saveToStorage, STORAGE_KEYS } from "../utils/localStorage";
 
 function Profile({
@@ -9,11 +9,15 @@ function Profile({
   setResumeText,
 }) {
   const formRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [notificationVisible, setNotificationVisible] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(formRef.current);
+    if (loading) return;
+    setLoading(true);
 
+    const formData = new FormData(formRef.current);
     const newApiKey = formData.get("apiKey");
     const newResumeText = formData.get("resume");
 
@@ -28,19 +32,40 @@ function Profile({
         saveToStorage(STORAGE_KEYS.RESUME_TEXT, newResumeText),
       ]);
 
+      // Show notification
+      setNotificationVisible(true);
+      setTimeout(() => setNotificationVisible(false), 2000);
+
       // Navigate back on successful save
       //   onBackClick();
     } catch (error) {
       console.error("Failed to save profile:", error);
       // Here you might want to show an error message to the user
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-[600px] w-[600px]">
+    <div className="flex flex-col h-[600px] w-[600px] relative">
+      {/* Notification */}
+      {notificationVisible && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-md shadow-md z-50">
+          Profile saved successfully!
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
-        <div className="w-8">{/* Empty div for spacing */}</div>
+        <button
+          onClick={handleSubmit}
+          className={`bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition-colors text-sm ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Save Profile"}
+        </button>
 
         <h1 className="text-2xl font-semibold">User Profile</h1>
 
@@ -66,7 +91,7 @@ function Profile({
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-50">
+      <main className="flex-1 p-6 bg-gray-50 overflow-auto">
         <form
           ref={formRef}
           onSubmit={handleSubmit}
@@ -122,16 +147,6 @@ function Profile({
                 This will be used to generate personalized cover letters.
               </p>
             </div>
-          </div>
-
-          {/* Save Button */}
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Save Profile
-            </button>
           </div>
         </form>
       </main>
