@@ -195,8 +195,18 @@ function executeEasyApplyScript(tabId) {
             );
             const submitClicked = clickSubmitButton();
             if (submitClicked) {
-              console.log("Form submitted successfully.");
-              continueLoop = false; // Stop the loop after submission
+              console.log(
+                "Form submitted successfully. Attempting to click done button."
+              );
+              setTimeout(() => {
+                const doneClicked = clickDoneButton();
+                if (doneClicked) {
+                  console.log("Done button clicked successfully.");
+                } else {
+                  console.log("Done button not found.");
+                }
+                continueLoop = false; // Stop the loop after submission and done
+              }, 2000); // Wait 2 seconds before attempting to click the done button
             } else {
               console.log("Submit button not found. Stopping loop.");
               continueLoop = false;
@@ -250,6 +260,7 @@ function executeEasyApplyScript(tabId) {
           const submitButton = document.querySelector(submitButtonSelector);
           if (submitButton) {
             submitButton.click();
+            console.log("Form submitted successfully.");
             return true;
           }
           console.log("Submit button not found");
@@ -275,6 +286,22 @@ function executeEasyApplyScript(tabId) {
               }
             }, 1000); // Check for errors after a short delay
           });
+        }
+
+        /**
+         * Attempts to click the "Done" button after form submission.
+         * @returns {boolean} True if the "Done" button is found and clicked, otherwise false.
+         */
+        function clickDoneButton() {
+          const doneButtonSelector =
+            ".artdeco-modal__actionbar .artdeco-button--primary";
+          const doneButton = document.querySelector(doneButtonSelector);
+          if (doneButton) {
+            doneButton.click();
+            return true;
+          }
+          console.log("Done button not found");
+          return false;
         }
 
         processForm();
