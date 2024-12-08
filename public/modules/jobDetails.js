@@ -90,7 +90,6 @@ export function extractJobDetails(tab) {
           return roleNameElement ? roleNameElement.textContent.trim() : "";
         }
 
-        console.log("Inside grabJobDescription with classNames:", classNames);
         const jobDetailsContainer = findJobDetailsContainer(
           classNames.descriptionClass
         );
