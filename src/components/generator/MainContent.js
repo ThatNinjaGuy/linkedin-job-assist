@@ -6,6 +6,7 @@ function MainContent({
   generateCoverLetter,
   loading,
   jobId,
+  handleEasyApplyClick,
 }) {
   return (
     <main className="flex-none p-4 bg-gray-50">
@@ -33,8 +34,11 @@ function MainContent({
           >
             {loading ? "Generating..." : "Generate Cover Letter"}
           </button>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%]">
-            Button 2
+          <button
+            onClick={handleEasyApplyClick}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%]"
+          >
+            Easy Apply
           </button>
           <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 transition-colors text-sm w-[48%]">
             Button 3
