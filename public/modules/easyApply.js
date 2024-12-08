@@ -21,6 +21,14 @@ export function handleEasyApply() {
   });
 }
 
+/**
+ * Executes the Easy Apply automation script in the specified tab.
+ * This function injects and runs a content script that handles the LinkedIn Easy Apply process,
+ * including clicking the apply button and filling out application forms.
+ *
+ * @param {number} tabId - The ID of the browser tab where the script will be executed
+ * @returns {Promise} A promise that resolves when the script execution is complete
+ */
 function executeEasyApplyScript(tabId) {
   return chrome.scripting.executeScript({
     target: { tabId },
@@ -31,6 +39,13 @@ function executeEasyApplyScript(tabId) {
         }, 2000); // Adjust timeout as needed
       }
 
+      /**
+       * Attempts to click the Easy Apply button on a LinkedIn job posting.
+       * Looks for the button using a specific CSS selector and triggers a click event if found.
+       *
+       * @returns {boolean} Returns true if the button was found and clicked successfully,
+       *                    false if the button wasn't found or if an error occurred
+       */
       function clickEasyApplyButton() {
         try {
           const easyApplyButton = document.querySelector(
@@ -47,12 +62,23 @@ function executeEasyApplyScript(tabId) {
         }
       }
 
+      /**
+       * Handles the form filling process for LinkedIn Easy Apply applications.
+       * Manages a loop that processes form fields, collects details, and handles button clicks.
+       * The loop continues until either all required fields are filled, an error occurs,
+       * or the maximum number of iterations is reached.
+       */
       function handleForm() {
         let continueLoop = true;
         let iterations = 0;
         const maxIterations = 10;
         const delayAfterClick = 1000; // Delay in milliseconds
 
+        /**
+         * Initiates the form processing loop.
+         * Continues until all required fields are filled and no errors are detected,
+         * or until the maximum number of iterations is reached.
+         */
         function processForm() {
           if (!continueLoop || iterations >= maxIterations) return;
 
@@ -72,6 +98,10 @@ function executeEasyApplyScript(tabId) {
           }
         }
 
+        /**
+         * Collects details from dropdown and text fields in the form.
+         * @returns {Array} An array of form field details.
+         */
         function collectFormDetails() {
           function extractDropdowns(formDetails) {
             const dropdowns = document.querySelectorAll("select");
@@ -97,6 +127,11 @@ function executeEasyApplyScript(tabId) {
             });
           }
 
+          /**
+           * Extracts text input fields from the form and adds their details to the formDetails array.
+           * Collects information about each text field including its label, value, and required status.
+           * @param {Array} formDetails - The array to store the collected form field details
+           */
           function extractTextFields(formDetails) {
             const textFields = document.querySelectorAll('input[type="text"]');
             textFields.forEach((input) => {
@@ -124,12 +159,21 @@ function executeEasyApplyScript(tabId) {
           return formDetails;
         }
 
+        /**
+         * Checks if all required fields in the form are filled.
+         * @param {Array} formDetails - The details of the form fields.
+         * @returns {boolean} True if all required fields are filled, otherwise false.
+         */
         function areAllRequiredFieldsFilled(formDetails) {
           return formDetails.every(
             (field) => !field.required || field.value || field.selectedValue
           );
         }
 
+        /**
+         * Handles the logic for clicking the "Next" or "Submit" buttons.
+         * Manages loop control based on button interactions and error detection.
+         */
         function handleButtonClicks() {
           console.log(
             "All required fields filled. Attempting to click next button."
@@ -160,6 +204,11 @@ function executeEasyApplyScript(tabId) {
           }
         }
 
+        /**
+         * Attempts to click the "Next" or "Review" button in the LinkedIn Easy Apply modal.
+         * Also checks for the button to become enabled after clicking.
+         * @returns {boolean} True if the next button was found and clicked, false otherwise.
+         */
         function clickNextButton() {
           const nextButtonSelector =
             ".jobs-easy-apply-modal footer button[aria-label*='next'], footer button[aria-label*='Review']";
@@ -191,6 +240,10 @@ function executeEasyApplyScript(tabId) {
           return false;
         }
 
+        /**
+         * Attempts to click the "Submit" button in the LinkedIn Easy Apply modal.
+         * @returns {boolean} True if the submit button was found and clicked, false otherwise.
+         */
         function clickSubmitButton() {
           const submitButtonSelector =
             ".jobs-easy-apply-modal footer button[aria-label*='Submit']";
@@ -203,6 +256,10 @@ function executeEasyApplyScript(tabId) {
           return false;
         }
 
+        /**
+         * Checks for error messages displayed in the LinkedIn Easy Apply modal.
+         * @returns {Promise<boolean>} A promise that resolves to true if no errors are found, false if errors are detected.
+         */
         function checkForErrors() {
           return new Promise((resolve) => {
             setTimeout(() => {
