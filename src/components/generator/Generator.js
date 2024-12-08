@@ -1,3 +1,5 @@
+/*global chrome*/
+
 import React, { useState, useEffect } from "react";
 import { getFromStorage } from "../../utils/localStorage";
 import { postChatGptMessage } from "../../utils/chatGPTUtil";
@@ -57,6 +59,16 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
     );
   };
 
+  const handleEasyApplyClick = () => {
+    chrome.runtime.sendMessage({ action: "easyApply" }, (response) => {
+      if (response.success) {
+        console.log("Easy Apply triggered successfully.");
+      } else {
+        console.error("Failed to trigger Easy Apply.");
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col h-[600px] w-[600px]">
       <Notification
@@ -65,11 +77,12 @@ function Generator({ onSettingsClick, resume, openAiKey }) {
       />
       <Header onSettingsClick={onSettingsClick} />
       <MainContent
-        jobId={jobId}
         companyName={companyName}
         roleName={roleName}
         generateCoverLetter={generateCoverLetter}
         loading={loading}
+        jobId={jobId}
+        handleEasyApplyClick={handleEasyApplyClick}
       />
       <Footer coverLetter={coverLetter} copyToClipboard={copyToClipboard} />
     </div>
